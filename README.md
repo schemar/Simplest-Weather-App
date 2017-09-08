@@ -1,26 +1,36 @@
-This is a starter template for [Ionic](http://ionicframework.com/docs/) projects.
+# weathering
+A simple weather application for android.
 
-## How to use this template
+## Running with Ionic CLI
+### Prerequisites
+- nodejs
+- npm
+- Android Studio to manage SDKs, AVDs, etc.
 
-*This template does not work on its own*. The shared files for each starter are found in the [ionic2-app-base repo](https://github.com/ionic-team/ionic2-app-base).
 
-To use this template, either create a new ionic project using the ionic node.js utility, or copy the files from this repository into the [Starter App Base](https://github.com/ionic-team/ionic2-app-base).
+Use Android Studio to install an appropriate SDK and virtual device.
 
-### With the Ionic CLI:
-
-Take the name after `ionic2-starter-`, and that is the name of the template to be used when using the `ionic start` command below:
-
+### Set-up
 ```bash
 $ sudo npm install -g ionic cordova
-$ ionic start myBlank blank
+$ npm install
 ```
 
-Then, to run it, cd into `myBlank` and run:
-
+### Running
+To access the application in a browser:
 ```bash
-$ ionic cordova platform add ios
-$ ionic cordova run ios
+$ ionic serve
 ```
 
-Substitute ios for android if not on a Mac.
+To build or emulate the android version:
+```bash
+$ ionic cordova build android
+$ ionic cordova emulate android
+```
 
+### Troubleshooting
+#### Arch linux
+- libGL errors
+  - Problem: Android comes with its own libstdc++ that does not work.
+  - Solution: `sudo mv /opt/android-sdk/emulator/lib64/libstdc++{,_backup}`
+  - Explanation: Renaming the directory forces the emulator to use the version that is installed system-wide.
