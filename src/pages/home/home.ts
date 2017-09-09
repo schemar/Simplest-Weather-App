@@ -1,24 +1,30 @@
 import { Component } from '@angular/core';
-import { Storage } from '@ionic/storage';
 
-import { Location } from '../../app/location';
+import { Location } from "../../app/location";
+import { WeatherLocation } from "../../app/weather-location";
+import { WeatherService } from "../../app/weather.service";
 
 @Component({
   selector: 'page-home',
-  templateUrl: 'home.html'
+  templateUrl: 'home.html',
+  providers: [
+    WeatherService
+  ]
 })
 export class HomePage {
   location: Location = new Location();
+  weatherLocation: WeatherLocation = new WeatherLocation();
 
-  constructor(private storage: Storage) {
-    storage.get('location').then((locationName) => {
-      this.location.name = locationName;
-    });
+  constructor(private weatherService: WeatherService) {
+    weatherService.getLocation().then((location) => {this.location = location});
   }
 
   setLocation() {
-    this.storage.set('location', this.location.name)
-      .then(function() {console.log('Stored location name')})
-      .catch(function() {console.log('Could not store location name')});
+    this.weatherService.setLocation(this.location);
+    console.log(this.weatherLocation);
+  }
+
+  getWeather() {
+    this.weatherService.getWeather(this.location).subscribe(response => this.weatherLocation = response.json());
   }
 }

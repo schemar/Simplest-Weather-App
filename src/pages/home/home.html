@@ -15,4 +15,28 @@
   </ion-list>
 
   <button ion-button block (click)="setLocation($event)">Set location</button>
+  <button ion-button block (click)="getWeather($event)">Get weather</button>
+
+  <ion-card>
+    <ion-card-header>
+      {{ location.name }}
+    </ion-card-header>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col col-12>
+          Temperature: {{ weatherLocation.main.temp }}
+        </ion-col>
+        <ion-col col-12>
+          Humidity: {{ weatherLocation.main.humidity }}
+        </ion-col>
+        <ion-col col-12>
+          Pressure: {{ weatherLocation.main.pressure }}
+        </ion-col>
+        <ion-col col-12 *ngFor="let weather of weatherLocation.weather">
+          Sky: {{ weather.main }}
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
 </ion-content>
