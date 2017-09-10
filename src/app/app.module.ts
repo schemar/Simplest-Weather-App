@@ -9,6 +9,7 @@ import { HttpModule } from "@angular/http";
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
+import { OpenWeatherMapService } from "./open-weather-map.service";
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { HomePage } from '../pages/home/home';
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    OpenWeatherMapService
   ]
 })
 export class AppModule {}

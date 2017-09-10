@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 
-import { Location } from "../../app/location";
-import { WeatherLocation } from "../../app/weather-location";
 import { WeatherService } from "../../app/weather.service";
+import { WeatherLocationInterface } from "../../app/weather-interface";
+import { WeatherLocation } from "../../app/weather";
 
 @Component({
   selector: 'page-home',
@@ -12,19 +12,17 @@ import { WeatherService } from "../../app/weather.service";
   ]
 })
 export class HomePage {
-  location: Location = new Location();
-  weatherLocation: WeatherLocation = new WeatherLocation();
+  location: WeatherLocationInterface = new WeatherLocation();
 
   constructor(private weatherService: WeatherService) {
-    weatherService.getLocation().then((location) => {this.location = location});
+    weatherService.getLocation().then((location) => {this.location = new WeatherLocation().deserialize(location)});
   }
 
-  setLocation() {
-    this.weatherService.setLocation(this.location);
-    console.log(this.weatherLocation);
+  storeLocation() {
+    this.weatherService.storeLocation(this.location);
   }
 
   getWeather() {
-    this.weatherService.getWeather(this.location).subscribe(response => this.weatherLocation = response.json());
+    this.weatherService.updateWeather(this.location);
   }
 }

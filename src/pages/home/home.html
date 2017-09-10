@@ -1,7 +1,7 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      <ion-icon name="sunny"></ion-icon> weathering
+      <ion-icon name="sunny"></ion-icon> {{ location.name }}
     </ion-title>
   </ion-navbar>
 </ion-header>
@@ -14,27 +14,38 @@
     </ion-item>
   </ion-list>
 
-  <button ion-button block (click)="setLocation($event)">Set location</button>
-  <button ion-button block (click)="getWeather($event)">Get weather</button>
+  <button ion-button block (click)="storeLocation()">Set location</button>
+  <button ion-button block (click)="getWeather()">Get weather</button>
 
   <ion-card>
     <ion-card-header>
-      {{ location.name }}
+      Now
     </ion-card-header>
 
     <ion-grid>
       <ion-row>
         <ion-col col-12>
-          Temperature: {{ weatherLocation.main.temp }}
+          Temperature: {{ location.now.getTemperature() }}
         </ion-col>
         <ion-col col-12>
-          Humidity: {{ weatherLocation.main.humidity }}
+          Sky: {{ location.now.getSky() }}
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      Soon
+    </ion-card-header>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col col-12>
+          Temperature: {{ location.soon.getTemperature() }}
         </ion-col>
         <ion-col col-12>
-          Pressure: {{ weatherLocation.main.pressure }}
-        </ion-col>
-        <ion-col col-12 *ngFor="let weather of weatherLocation.weather">
-          Sky: {{ weather.main }}
+          Sky: {{ location.soon.getSky() }}
         </ion-col>
       </ion-row>
     </ion-grid>
