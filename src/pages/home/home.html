@@ -3,6 +3,12 @@
     <ion-title>
       <ion-icon name="sunny"></ion-icon> {{ location.name }}
     </ion-title>
+
+    <ion-buttons end>
+      <button ion-button icon-only (click)="searchLocation()">
+        <ion-icon name="search"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
