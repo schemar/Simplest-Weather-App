@@ -1,22 +1,32 @@
 import { Component } from '@angular/core';
-import { NavController } from "ionic-angular";
+import { NavController, NavParams } from "ionic-angular";
+import { OpenWeatherMapService } from "../../app/open-weather-map.service";
+import { Location } from "../../app/location";
 
 @Component({
   selector: 'page-location-search',
   templateUrl: 'location-search.html'
 })
 export class LocationSearch {
-  items: string[] = ['1', 'two'];
+  searchInput: string;
+  callback: LocationCallbackFunction;
+  items: Location[] = [];
 
-  constructor(private navController: NavController) {
+  constructor(private navController: NavController, private navParams: NavParams, private openWeatherMap: OpenWeatherMapService) {
+    this.callback = navParams.get('callback');
   }
 
   getItems() {
-    this.items.push('moar');
+    this.openWeatherMap.findLocations(this.searchInput, this.items);
   }
 
   selectItem(item) {
-    console.log(item);
-    this.navController.pop();
+    this.callback(item).then(() => {
+      this.navController.pop();
+    });
   }
 }
+
+interface LocationCallbackFunction {
+  (location: Location): Promise<void>
+};

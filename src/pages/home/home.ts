@@ -4,6 +4,7 @@ import { NavController } from "ionic-angular";
 import { WeatherService } from "../../app/weather.service";
 import { WeatherLocationInterface } from "../../app/weather-interface";
 import { WeatherLocation } from "../../app/weather";
+import { Location } from "../../app/location";
 import { LocationSearch } from "../location-search/location-search";
 
 @Component({
@@ -14,22 +15,35 @@ import { LocationSearch } from "../location-search/location-search";
   ]
 })
 export class HomePage {
-  location: WeatherLocationInterface = new WeatherLocation();
+  location: Location = new Location('id', 'unknown', '');
+  weather: WeatherLocationInterface = new WeatherLocation();
 
   constructor(private navController: NavController, private weatherService: WeatherService) {
-    weatherService.getLocation().then((location) => {this.location = new WeatherLocation().deserialize(location)});
+    weatherService.getLocation().then((location) => {this.location = location});
+    weatherService.getWeather().then((weather) => {this.weather = new WeatherLocation().deserialize(weather)});
   }
 
   searchLocation() {
-    console.log('Pushing: ', LocationSearch);
-    this.navController.push(LocationSearch);
+    let _that = this;
+    let setLocationCallback = function(selectedLocation) {
+      return new Promise((resolve) => {
+        _that.weatherService.storeLocation(selectedLocation);
+        _that.location = selectedLocation;
+        _that.weather.id = selectedLocation.id;
+        _that.weather.name = selectedLocation.name;
+        _that.getWeather();
+        resolve();
+      });
+    };
+
+    this.navController.push(LocationSearch, {callback: setLocationCallback});
   }
 
-  storeLocation() {
-    this.weatherService.storeLocation(this.location);
+  storeWeather() {
+    this.weatherService.storeWeather(this.weather);
   }
 
   getWeather() {
-    this.weatherService.updateWeather(this.location);
+    this.weatherService.updateWeather(this.weather);
   }
 }

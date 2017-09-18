@@ -13,14 +13,6 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-list>
-    <ion-item>
-      <ion-label floating>Location</ion-label>
-      <ion-input type="text" [(ngModel)]="location.name"></ion-input>
-    </ion-item>
-  </ion-list>
-
-  <button ion-button block (click)="storeLocation()">Set location</button>
   <button ion-button block (click)="getWeather()">Get weather</button>
 
   <ion-card>
@@ -31,10 +23,10 @@
     <ion-grid>
       <ion-row>
         <ion-col col-12>
-          Temperature: {{ location.now.getTemperature() }}
+          Temperature: {{ weather.now.getTemperature() }}
         </ion-col>
         <ion-col col-12>
-          Sky: {{ location.now.getSky() }}
+          Sky: {{ weather.now.getSky() }}
         </ion-col>
       </ion-row>
     </ion-grid>
@@ -48,10 +40,10 @@
     <ion-grid>
       <ion-row>
         <ion-col col-12>
-          Temperature: {{ location.soon.getTemperature() }}
+          Temperature: {{ weather.soon.getTemperature() }}
         </ion-col>
         <ion-col col-12>
-          Sky: {{ location.soon.getSky() }}
+          Sky: {{ weather.soon.getSky() }}
         </ion-col>
       </ion-row>
     </ion-grid>
