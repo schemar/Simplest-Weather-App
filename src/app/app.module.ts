@@ -10,11 +10,13 @@ import { HttpModule } from "@angular/http";
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { OpenWeatherMapService } from "./open-weather-map.service";
+import { LocationSearch } from "../pages/location-search/location-search";
 
 @NgModule({
   declarations: [
     MyApp,
-    HomePage
+    HomePage,
+    LocationSearch
   ],
   imports: [
     BrowserModule,
@@ -25,7 +27,8 @@ import { OpenWeatherMapService } from "./open-weather-map.service";
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage
+    HomePage,
+    LocationSearch
   ],
   providers: [
     StatusBar,
