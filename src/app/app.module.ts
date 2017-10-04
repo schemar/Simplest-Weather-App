@@ -11,12 +11,14 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { OpenWeatherMapService } from "./open-weather-map.service";
 import { LocationSearch } from "../pages/location-search/location-search";
+import { TemperaturePipe } from "./temperature.pipe";
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
-    LocationSearch
+    LocationSearch,
+    TemperaturePipe
   ],
   imports: [
     BrowserModule,

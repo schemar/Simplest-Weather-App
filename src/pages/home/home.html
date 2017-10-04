@@ -23,7 +23,7 @@
     <ion-grid>
       <ion-row>
         <ion-col col-12>
-          Temperature: {{ weather.now.getTemperature() }}
+          Temperature: {{ weather.now.getTemperature() | temperature  }}
         </ion-col>
         <ion-col col-12>
           Sky: {{ weather.now.getSky() }}
@@ -40,7 +40,7 @@
     <ion-grid>
       <ion-row>
         <ion-col col-12>
-          Temperature: {{ weather.soon.getTemperature() }}
+          Temperature: {{ weather.soon.getTemperature() | temperature }}
         </ion-col>
         <ion-col col-12>
           Sky: {{ weather.soon.getSky() }}
