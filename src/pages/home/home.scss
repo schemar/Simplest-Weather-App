@@ -1,3 +1,9 @@
-page-home {
+.weather-card {
+  ion-card-header {
+    font-size: 2rem;
+  }
 
+  ion-grid {
+    font-size: 5rem;
+  }
 }

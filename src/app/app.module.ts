@@ -12,13 +12,15 @@ import { HomePage } from '../pages/home/home';
 import { OpenWeatherMapService } from "./open-weather-map.service";
 import { LocationSearch } from "../pages/location-search/location-search";
 import { TemperaturePipe } from "./temperature.pipe";
+import { SkyIconPipe } from "./skyIcon.pipe";
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
     LocationSearch,
-    TemperaturePipe
+    TemperaturePipe,
+    SkyIconPipe
   ],
   imports: [
     BrowserModule,

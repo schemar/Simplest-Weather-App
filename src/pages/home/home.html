@@ -15,7 +15,7 @@
 <ion-content padding>
   <button ion-button block (click)="getWeather()">Get weather</button>
 
-  <ion-card>
+  <ion-card class="weather-card">
     <ion-card-header>
       Now
     </ion-card-header>
@@ -23,16 +23,14 @@
     <ion-grid>
       <ion-row>
         <ion-col col-12>
-          Temperature: {{ weather.now.getTemperature() | temperature  }}
-        </ion-col>
-        <ion-col col-12>
-          Sky: {{ weather.now.getSky() }}
+          <ion-icon [name]="weather.now.getSky() | skyIcon"></ion-icon>&nbsp;
+          {{ weather.now.getTemperature() | temperature  }}
         </ion-col>
       </ion-row>
     </ion-grid>
   </ion-card>
 
-  <ion-card>
+  <ion-card class="weather-card">
     <ion-card-header>
       Soon
     </ion-card-header>
@@ -40,10 +38,8 @@
     <ion-grid>
       <ion-row>
         <ion-col col-12>
-          Temperature: {{ weather.soon.getTemperature() | temperature }}
-        </ion-col>
-        <ion-col col-12>
-          Sky: {{ weather.soon.getSky() }}
+          <ion-icon [name]="weather.soon.getSky() | skyIcon"></ion-icon>&nbsp;
+          {{ weather.soon.getTemperature() | temperature }}
         </ion-col>
       </ion-row>
     </ion-grid>
