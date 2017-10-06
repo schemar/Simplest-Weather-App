@@ -5,15 +5,11 @@ export interface WeatherLocationInterface {
   soon: WeatherInterface;
   later: WeatherInterface;
   tomorrow: WeatherInterface;
-
-  deserialize(input: Object): WeatherLocationInterface;
 }
 
 export interface WeatherInterface {
-  getTemperature(): number;
-  getSky(): Sky;
-
-  deserialize(input: Object): WeatherInterface;
+  temperature: number;
+  sky: Sky;
 }
 
 export enum Sky {

@@ -1,7 +1,7 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      <ion-icon name="sunny"></ion-icon> {{ location.name }}
+      <ion-icon [name]="location.now.sky | skyIcon"></ion-icon> {{ location.name }}
     </ion-title>
 
     <ion-buttons end>
@@ -23,8 +23,8 @@
     <ion-grid>
       <ion-row>
         <ion-col col-12>
-          <ion-icon [name]="weather.now.getSky() | skyIcon"></ion-icon>&nbsp;
-          {{ weather.now.getTemperature() | temperature  }}
+          <ion-icon [name]="location.now.sky | skyIcon"></ion-icon>&nbsp;
+          {{ location.now.temperature | temperature  }}
         </ion-col>
       </ion-row>
     </ion-grid>
@@ -38,8 +38,38 @@
     <ion-grid>
       <ion-row>
         <ion-col col-12>
-          <ion-icon [name]="weather.soon.getSky() | skyIcon"></ion-icon>&nbsp;
-          {{ weather.soon.getTemperature() | temperature }}
+          <ion-icon [name]="location.soon.sky | skyIcon"></ion-icon>&nbsp;
+          {{ location.soon.temperature | temperature }}
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+
+  <ion-card class="weather-card">
+    <ion-card-header>
+      Later
+    </ion-card-header>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col col-12>
+          <ion-icon [name]="location.later.sky | skyIcon"></ion-icon>&nbsp;
+          {{ location.later.temperature | temperature }}
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+
+  <ion-card class="weather-card">
+    <ion-card-header>
+      Tomorrow
+    </ion-card-header>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col col-12>
+          <ion-icon [name]="location.tomorrow.sky | skyIcon"></ion-icon>&nbsp;
+          {{ location.tomorrow.temperature | temperature }}
         </ion-col>
       </ion-row>
     </ion-grid>

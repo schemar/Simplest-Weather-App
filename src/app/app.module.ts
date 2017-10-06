@@ -13,6 +13,7 @@ import { OpenWeatherMapService } from "./open-weather-map.service";
 import { LocationSearch } from "../pages/location-search/location-search";
 import { TemperaturePipe } from "./temperature.pipe";
 import { SkyIconPipe } from "./skyIcon.pipe";
+import { StorageService } from "./storage.service";
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { SkyIconPipe } from "./skyIcon.pipe";
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
+    StorageService,
     OpenWeatherMapService
   ]
 })

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from "ionic-angular";
 import { OpenWeatherMapService } from "../../app/open-weather-map.service";
-import { Location } from "../../app/location";
+import { WeatherLocation } from "../../app/weather";
 
 @Component({
   selector: 'page-location-search',
@@ -10,9 +10,9 @@ import { Location } from "../../app/location";
 export class LocationSearch {
   searchInput: string;
   callback: LocationCallbackFunction;
-  items: Location[] = [];
+  items: WeatherLocation[] = [];
 
-  constructor(private navController: NavController, private navParams: NavParams, private openWeatherMap: OpenWeatherMapService) {
+  constructor(private navController: NavController, navParams: NavParams, private openWeatherMap: OpenWeatherMapService) {
     this.callback = navParams.get('callback');
   }
 
@@ -29,4 +29,4 @@ export class LocationSearch {
 
 interface LocationCallbackFunction {
   (location: Location): Promise<void>
-};
+}
