@@ -2,7 +2,7 @@
 A simple weather application for android.
 
 ## Issue Tracker
-This is a mirror and the issue tracker is available at the main repository:
+The issue tracker is available at the main repository:
 https://bitbucket.org/schemar_team/weathering.git
 
 Please also create your pull requests there.
