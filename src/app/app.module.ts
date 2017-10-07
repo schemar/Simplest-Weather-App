@@ -14,6 +14,7 @@ import { LocationSearch } from "../pages/location-search/location-search";
 import { TemperaturePipe } from "./temperature.pipe";
 import { SkyIconPipe } from "./skyIcon.pipe";
 import { StorageService } from "./storage.service";
+import { WeatherService } from "./weather.service";
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { StorageService } from "./storage.service";
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
+    WeatherService,
     StorageService,
     OpenWeatherMapService
   ]

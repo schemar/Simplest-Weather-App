@@ -16,6 +16,10 @@ import { Pipe, PipeTransform } from "@angular/core";
 })
 export class TemperaturePipe implements PipeTransform {
   transform(value: number): string {
+    if (value === 0) {
+      return '?';
+    }
+
     let degreesCelsius = value - 273.15;
     degreesCelsius = Math.round(degreesCelsius);
 

@@ -1,4 +1,5 @@
 import { Sky } from "./weather-interface";
+import {WeatherLocation} from "./weather";
 
 export class OpenWeatherMapResponse {
   coord: Coordinates;
@@ -9,22 +10,29 @@ export class OpenWeatherMapResponse {
   wind: Object;
   clouds: Object;
   dt: number;
-  sys: Object;
+  sys: Sys;
   id: number;
   name: string;
   cod: number;
 
-  constructor() {
-    this.weather = [];
-    this.main = new Details();
+  public static toWeatherLocation(response: OpenWeatherMapResponse): WeatherLocation {
+    return new WeatherLocation(
+      response.id,
+      response.name,
+      OpenWeatherMapResponse.getCountry(response)
+    );
   }
 
-  getTemperature(): number {
-    return this.main.temp;
+  public static getCountry(response: OpenWeatherMapResponse): string {
+    return response.sys.country;
   }
 
-  getSky(): Sky {
-    let weather = this.weather[0];
+  public static getTemperature(response: OpenWeatherMapResponse): number {
+    return response.main.temp;
+  }
+
+  public static getSky(response: OpenWeatherMapResponse): Sky {
+    let weather = response.weather[0];
     let id = weather.id;
 
     if (id < 300) {
@@ -89,4 +97,8 @@ class Details {
   temp_max: number;
   humidity: number;
   pressure: number;
+}
+
+class Sys {
+  country: string;
 }

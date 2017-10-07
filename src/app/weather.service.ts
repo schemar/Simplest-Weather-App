@@ -7,7 +7,11 @@ import { WeatherLocationInterface } from "./weather-interface";
 export class WeatherService {
   constructor(private openWeatherMapService: OpenWeatherMapService) {}
 
-  updateWeather(weather: WeatherLocationInterface) {
-    this.openWeatherMapService.updateWeather(weather);
+  public updateWeather(location: WeatherLocationInterface): Promise<WeatherLocationInterface> {
+    return this.openWeatherMapService.updateWeather(location);
+  }
+
+  public findLocations(searchTerm: string): Promise<WeatherLocationInterface[]> {
+    return this.openWeatherMapService.findLocations(searchTerm);
   }
 }

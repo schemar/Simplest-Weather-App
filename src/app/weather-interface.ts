@@ -1,6 +1,7 @@
 export interface WeatherLocationInterface {
-  id: string;
-  name: string;
+  readonly id: number;
+  readonly name: string;
+  readonly country: string;
   now: WeatherInterface;
   soon: WeatherInterface;
   later: WeatherInterface;
@@ -8,8 +9,8 @@ export interface WeatherLocationInterface {
 }
 
 export interface WeatherInterface {
-  temperature: number;
-  sky: Sky;
+  readonly temperature: number;
+  readonly sky: Sky;
 }
 
 export enum Sky {

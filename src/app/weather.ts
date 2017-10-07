@@ -6,7 +6,7 @@ export class WeatherLocation implements WeatherLocationInterface {
   public later: WeatherInterface;
   public tomorrow: WeatherInterface;
 
-  constructor (readonly id: string, readonly name: string, readonly country: string) {
+  constructor (readonly id: number, readonly name: string, readonly country: string) {
     this.now = new Weather(0, Sky.Unknown);
     this.soon = new Weather(0, Sky.Unknown);
     this.later = new Weather(0, Sky.Unknown);

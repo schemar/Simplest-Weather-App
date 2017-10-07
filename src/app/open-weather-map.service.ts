@@ -3,97 +3,107 @@ import { Http } from "@angular/http";
 import { WeatherLocationInterface } from "./weather-interface";
 import { OpenWeatherMapResponse } from "./open-weather-map-response";
 import { Weather, WeatherLocation } from "./weather";
-import { StorageService } from "./storage.service";
+import {Observable} from "rxjs/Observable";
+import 'rxjs/add/operator/map';
+import {WeatherApiInterface} from "./weather-api-interface";
 
 @Injectable()
-export class OpenWeatherMapService {
-  apiKey: string = '15737c2e295e46d2f02eac5ff71488c8';
+export class OpenWeatherMapService implements WeatherApiInterface {
+  private urlMethodNow: string = 'weather';
+  private urlMethodForecast: string = 'forecast';
+  private apiKey: string = '15737c2e295e46d2f02eac5ff71488c8';
   // Either 'like' or 'accurate'
-  locationSearchType: string = 'like';
+  private locationSearchType: string = 'like';
 
-  constructor(private http: Http, private storage: StorageService) {}
+  constructor(private http: Http) {}
 
-  updateWeather(weatherLocation: WeatherLocationInterface) {
-    this.updateNow(weatherLocation);
-    this.updateForecast(weatherLocation);
+  public updateWeather(location: WeatherLocationInterface): Promise<WeatherLocationInterface> {
+    let updatedLocation = new WeatherLocation(location.id, location.name, location.country);
+
+    return this.updateNow(updatedLocation)
+      .then(updatedLocation => this.updateForecast(updatedLocation));
   }
 
-  updateNow(weatherLocation: WeatherLocationInterface) {
-    let storage = this.storage;
-    this.http.get('https://api.openweathermap.org/data/2.5/weather?id='+weatherLocation.id+'&APPID='+this.apiKey).subscribe(function (response) {
-      let responseObject = response.json();
-      let openWeatherMapsResponse = new OpenWeatherMapResponse();
+  public findLocations(search: string): Promise<WeatherLocationInterface[]> {
+    return new Promise(resolve => {
+      this.getLocationList(search).subscribe(locationsResponse => {
+            let list: WeatherLocationInterface[] = [];
 
-      openWeatherMapsResponse.main = responseObject.main;
-      openWeatherMapsResponse.weather = responseObject.weather;
+          locationsResponse.forEach(locationResponse => {
+              list.push(
+                OpenWeatherMapResponse.toWeatherLocation(locationResponse)
+              );
+            });
 
-      weatherLocation.now = new Weather(openWeatherMapsResponse.getTemperature(), openWeatherMapsResponse.getSky());
-      storage.storeLocation(weatherLocation);
+            resolve(list);
+          }
+        )
     });
   }
 
-  updateForecast(weatherLocation: WeatherLocationInterface) {
-    let storage = this.storage;
+  private updateNow(location: WeatherLocationInterface): Promise<WeatherLocationInterface> {
+    return new Promise(resolve => {
+      this.getNow(location).subscribe(locationResponse => {
+        location.now = OpenWeatherMapService.createWeatherFromResponse(locationResponse);
 
-    this.http.get('https://api.openweathermap.org/data/2.5/forecast?id='+weatherLocation.id+'&APPID='+this.apiKey).subscribe(function (response) {
-      let responseObject = response.json();
-
-      let now = Math.floor(Date.now() / 1000);
-
-      let localDate = new Date();
-      let tomorrowDate = new Date(localDate.getFullYear(),localDate.getMonth(), localDate.getDate() + 1, 13);
-      let tomorrowTimestamp = Math.floor(tomorrowDate.getTime() / 1000);
-
-      let soonFound = false;
-      let laterFound = false;
-      let tomorrowFound = false;
-      responseObject.list.forEach((report: OpenWeatherMapResponse) => {
-        if (soonFound && laterFound && tomorrowFound) {
-          return;
-        }
-
-        let differenceInHours = OpenWeatherMapService.differenceInHours(report.dt, now);
-
-        if(differenceInHours >= 2.5 && !soonFound) {
-          soonFound = true;
-
-          weatherLocation.soon = OpenWeatherMapService.createWeatherFromReport(report);
-        }
-
-        if(differenceInHours >= 5 && !laterFound) {
-          laterFound = true;
-
-          weatherLocation.later = OpenWeatherMapService.createWeatherFromReport(report);
-        }
-
-        if(report.dt > tomorrowTimestamp && !tomorrowFound) {
-          tomorrowFound = true;
-
-          weatherLocation.tomorrow = OpenWeatherMapService.createWeatherFromReport(report);
-        }
-      });
-
-
-      storage.storeLocation(weatherLocation);
-    });
-  }
-
-  findLocations(search: string, list: WeatherLocationInterface[]) {
-    this.http.get('https://api.openweathermap.org/data/2.5/find?q='+search+'&type='+this.locationSearchType+'&APPID='+this.apiKey).subscribe(function (response) {
-      OpenWeatherMapService.emptyList(list);
-
-      let parsedResponse = response.json();
-      parsedResponse.list.forEach(function(location) {
-        let newLocation = new WeatherLocation(location.id, location.name, location.sys.country);
-        list.push(newLocation);
+        resolve(location)
       });
     });
   }
 
-  private static emptyList(list: WeatherLocationInterface[]) {
-    while(list.length > 0) {
-      list.pop();
-    }
+  private updateForecast(location: WeatherLocationInterface): Promise<WeatherLocationInterface> {
+    return new Promise(resolve => {
+      this.getForecast(location).subscribe(locationsResponse => {
+        let now = Math.floor(Date.now() / 1000);
+        let tomorrowTimestamp = OpenWeatherMapService.getTomorrowTimestamp();
+
+        let soonFound = false;
+        let laterFound = false;
+        let tomorrowFound = false;
+        locationsResponse.forEach(locationResponse => {
+          if (soonFound && laterFound && tomorrowFound) {
+            return;
+          }
+
+          let differenceInHours = OpenWeatherMapService.differenceInHours(locationResponse.dt, now);
+
+          if(differenceInHours >= 2.5 && !soonFound) {
+            soonFound = true;
+            location.soon = OpenWeatherMapService.createWeatherFromResponse(locationResponse);
+          }
+
+          if(differenceInHours >= 5 && !laterFound) {
+            laterFound = true;
+            location.later = OpenWeatherMapService.createWeatherFromResponse(locationResponse);
+          }
+
+          if(locationResponse.dt > tomorrowTimestamp && !tomorrowFound) {
+            tomorrowFound = true;
+            location.tomorrow = OpenWeatherMapService.createWeatherFromResponse(locationResponse);
+          }
+        });
+
+        resolve(location)
+      });
+    });
+  }
+
+  private getNow(location: WeatherLocationInterface): Observable<OpenWeatherMapResponse> {
+    return this.http
+      .get(this.getUrl(this.urlMethodNow, location))
+      .map(response => response.json() as OpenWeatherMapResponse)
+  }
+
+  private getForecast(location: WeatherLocationInterface): Observable<OpenWeatherMapResponse[]> {
+    return this.http
+      .get(this.getUrl(this.urlMethodForecast, location))
+      .map(response => response.json().list as OpenWeatherMapResponse[]);
+  }
+
+  private getLocationList(searchTerm: string): Observable<OpenWeatherMapResponse[]> {
+    return this.http
+      .get('https://api.openweathermap.org/data/2.5/find?q=' + searchTerm + '&type=' + this.locationSearchType + '&APPID=' + this.apiKey)
+      .map(response => response.json().list as OpenWeatherMapResponse[]);
   }
 
   private static differenceInHours(timestampOne: number, timestampTwo: number): number {
@@ -103,11 +113,20 @@ export class OpenWeatherMapService {
     return differenceInSeconds / secondsPerHour;
   }
 
-  private static createWeatherFromReport(report: OpenWeatherMapResponse): Weather {
-    let openWeatherMapsResponse = new OpenWeatherMapResponse();
-    openWeatherMapsResponse.main = report.main;
-    openWeatherMapsResponse.weather = report.weather;
+  private static createWeatherFromResponse(response: OpenWeatherMapResponse): Weather {
+    return new Weather(
+      OpenWeatherMapResponse.getTemperature(response),
+      OpenWeatherMapResponse.getSky(response)
+    );
+  }
 
-    return new Weather(openWeatherMapsResponse.getTemperature(), openWeatherMapsResponse.getSky());
+  private static getTomorrowTimestamp(): number {
+    let localDate = new Date();
+    let tomorrowDate = new Date(localDate.getFullYear(),localDate.getMonth(), localDate.getDate() + 1, 13);
+    return Math.floor(tomorrowDate.getTime() / 1000);
+  }
+
+  private getUrl(method: string, location: WeatherLocationInterface) {
+    return 'https://api.openweathermap.org/data/2.5/'+method+'?id='+location.id+'&APPID='+this.apiKey
   }
 }

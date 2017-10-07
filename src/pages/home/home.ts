@@ -9,21 +9,17 @@ import { WeatherLocationInterface } from "../../app/weather-interface";
 
 @Component({
   selector: 'page-home',
-  templateUrl: 'home.html',
-  providers: [
-    WeatherService
-  ]
+  templateUrl: 'home.html'
 })
 export class HomePage {
-  location: WeatherLocationInterface = new WeatherLocation('id', 'unknown', 'unknown');
+  location: WeatherLocationInterface = new WeatherLocation(0, 'unknown', 'unknown');
 
   constructor(private navController: NavController, private weatherService: WeatherService, private storage: StorageService) {
     storage.getLocation().then((location) => {
       if(location === null) {
-        return;
+        return this.searchLocation();
       }
 
-      console.log('Got location: ', location);
       this.location = new WeatherLocation(location.id, location.name, location.country);
       this.location.now = location.now;
       this.location.soon = location.soon;
@@ -35,19 +31,18 @@ export class HomePage {
 
   searchLocation() {
     let _that = this;
-    let setLocationCallback = function(selectedLocation) {
-      return new Promise((resolve) => {
-        _that.storage.storeLocation(selectedLocation);
+    let setLocationCallback = selectedLocation => {
         _that.location = selectedLocation;
         _that.getWeather();
-        resolve();
-      });
     };
 
     this.navController.push(LocationSearch, {callback: setLocationCallback});
   }
 
   getWeather() {
-    this.weatherService.updateWeather(this.location);
+    this.weatherService.updateWeather(this.location).then(location => {
+      this.storage.storeLocation(location);
+      this.location = location
+    });
   }
 }
