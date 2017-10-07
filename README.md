@@ -43,6 +43,7 @@ $ ionic cordova build android --prod
 
 Releases:
 ```bash
+$ ionic cordova build android --prod --release
 $ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore <path-to-your-keystore> <path-to-unsigned-apk> <alisa-name>
 $ zipalign 4 <path-to-unsigned-apk> <path-where-signed-apk-should-be-created>
 ```
