@@ -23,15 +23,28 @@ $ npm install
 ```
 
 ### Running
+#### Browser
 To access the application in a browser:
 ```bash
 $ ionic serve
 ```
 
+#### Android
 To build or emulate the android version:
 ```bash
 $ ionic cordova build android
 $ ionic cordova emulate android
+```
+
+To build a "prod" version:
+```bash
+$ ionic cordova build android --prod
+```
+
+Releases:
+```bash
+$ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore <path-to-your-keystore> <path-to-unsigned-apk> <alisa-name>
+$ zipalign 4 <path-to-unsigned-apk> <path-where-signed-apk-should-be-created>
 ```
 
 ### Troubleshooting
