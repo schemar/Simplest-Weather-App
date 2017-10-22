@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {LoadingController, NavController} from "ionic-angular";
+import {LoadingController, NavController, Platform} from "ionic-angular";
 
 import { WeatherService } from "../../app/weather.service";
 import { LocationSearch } from "../location-search/location-search";
@@ -18,7 +18,8 @@ export class HomePage {
     private navController: NavController,
     private loadingController: LoadingController,
     private weatherService: WeatherService,
-    private storage: StorageService
+    private storage: StorageService,
+    platform: Platform
   ) {
     storage.getLocation().then((location) => {
       if(location === null) {
@@ -30,8 +31,13 @@ export class HomePage {
       this.location.soon = location.soon;
       this.location.later = location.later;
       this.location.tomorrow = location.tomorrow;
+
+      this.getWeather();
     });
 
+    platform.resume.subscribe(() => {
+      this.getWeather();
+    });
   }
 
   searchLocation() {
