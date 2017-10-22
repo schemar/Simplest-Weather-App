@@ -26,12 +26,7 @@ export class HomePage {
         return this.searchLocation();
       }
 
-      this.location = new WeatherLocation(location.id, location.name, location.country);
-      this.location.now = location.now;
-      this.location.soon = location.soon;
-      this.location.later = location.later;
-      this.location.tomorrow = location.tomorrow;
-
+      this.location = location;
       this.getWeather();
     });
 

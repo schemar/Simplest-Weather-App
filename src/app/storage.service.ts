@@ -12,8 +12,8 @@ export class StorageService {
 
   storeLocation(location: WeatherLocationInterface) {
     this.storage.set('location', location)
-      .catch(() => {
-        console.log('Could not store location', location)
+      .catch(reason => {
+        console.error('Could not store location', location, reason)
       });
   }
 }

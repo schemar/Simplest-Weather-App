@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { Http } from "@angular/http";
 import { WeatherLocationInterface } from "./weather-interface";
 import { OpenWeatherMapResponse } from "./open-weather-map-response";
-import { Weather, WeatherLocation } from "./weather";
+import { Weather} from "./weather";
 import {Observable} from "rxjs/Observable";
 import 'rxjs/add/operator/map';
 import {WeatherApiInterface} from "./weather-api-interface";
+import {Storage} from "@ionic/storage";
 
 @Injectable()
 export class OpenWeatherMapService implements WeatherApiInterface {
@@ -15,36 +16,56 @@ export class OpenWeatherMapService implements WeatherApiInterface {
   // Either 'like' or 'accurate'
   private locationSearchType: string = 'like';
 
-  constructor(private http: Http) {}
+  private lastUpdateNow: Date = new Date(1970, 1, 1);
+  private lastUpdateForecast: Date = new Date(1970, 1, 1);
+
+  constructor(private http: Http, private storage: Storage) {
+    storage.get('lastUpdateNow').then(lastUpdateNow => {
+      if (lastUpdateNow !== null) {
+        this.lastUpdateNow = new Date(lastUpdateNow);
+      }
+    });
+
+    storage.get('lastUpdateForecast').then(lastUpdateForecast => {
+      if (lastUpdateForecast !== null) {
+        this.lastUpdateForecast = new Date(lastUpdateForecast);
+      }
+    });
+  }
 
   public updateWeather(location: WeatherLocationInterface): Promise<WeatherLocationInterface> {
-    let updatedLocation = new WeatherLocation(location.id, location.name, location.country);
-
-    return this.updateNow(updatedLocation)
-      .then(updatedLocation => this.updateForecast(updatedLocation));
+    return this.updateNow(location)
+      .then(location => this.updateForecast(location));
   }
 
   public findLocations(search: string): Promise<WeatherLocationInterface[]> {
     return new Promise(resolve => {
       this.getLocationList(search).subscribe(locationsResponse => {
-            let list: WeatherLocationInterface[] = [];
+        let list: WeatherLocationInterface[] = [];
 
-          locationsResponse.forEach(locationResponse => {
-              list.push(
-                OpenWeatherMapResponse.toWeatherLocation(locationResponse)
-              );
-            });
+        locationsResponse.forEach(locationResponse => {
+          list.push(
+            OpenWeatherMapResponse.toWeatherLocation(locationResponse)
+          );
+        });
 
-            resolve(list);
-          }
-        )
+        resolve(list);
+      })
     });
   }
 
   private updateNow(location: WeatherLocationInterface): Promise<WeatherLocationInterface> {
+    if (OpenWeatherMapService.getMinutesSince(this.lastUpdateNow) < 10) {
+      console.info('Not updating "now", since the last update was less than 10 minutes ago:', this.lastUpdateNow);
+      return new Promise(resolve => {resolve(location)});
+    }
+
     return new Promise(resolve => {
       this.getNow(location).subscribe(locationResponse => {
         location.now = OpenWeatherMapService.createWeatherFromResponse(locationResponse);
+
+        this.lastUpdateNow = new Date();
+        this.storage.set('lastUpdateNow', this.lastUpdateNow.getTime());
 
         resolve(location)
       });
@@ -52,6 +73,11 @@ export class OpenWeatherMapService implements WeatherApiInterface {
   }
 
   private updateForecast(location: WeatherLocationInterface): Promise<WeatherLocationInterface> {
+    if (OpenWeatherMapService.getMinutesSince(this.lastUpdateForecast) < 60) {
+      console.info('Not updating "forecast", since the last update was less than 60 minutes ago:', this.lastUpdateForecast);
+      return new Promise(resolve => {resolve(location)});
+    }
+
     return new Promise(resolve => {
       this.getForecast(location).subscribe(locationsResponse => {
         let now = Math.floor(Date.now() / 1000);
@@ -83,6 +109,9 @@ export class OpenWeatherMapService implements WeatherApiInterface {
           }
         });
 
+        this.lastUpdateForecast = new Date();
+        this.storage.set('lastUpdateForecast', this.lastUpdateForecast.getTime());
+
         resolve(location)
       });
     });
@@ -106,6 +135,10 @@ export class OpenWeatherMapService implements WeatherApiInterface {
       .map(response => response.json().list as OpenWeatherMapResponse[]);
   }
 
+  private getUrl(method: string, location: WeatherLocationInterface) {
+    return 'https://api.openweathermap.org/data/2.5/'+method+'?id='+location.id+'&APPID='+this.apiKey
+  }
+
   private static differenceInHours(timestampOne: number, timestampTwo: number): number {
     let differenceInSeconds = Math.abs(timestampOne - timestampTwo);
     let secondsPerHour = 60 * 60;
@@ -126,7 +159,7 @@ export class OpenWeatherMapService implements WeatherApiInterface {
     return Math.floor(tomorrowDate.getTime() / 1000);
   }
 
-  private getUrl(method: string, location: WeatherLocationInterface) {
-    return 'https://api.openweathermap.org/data/2.5/'+method+'?id='+location.id+'&APPID='+this.apiKey
+  private static getMinutesSince(since: Date): number {
+    return (Date.now() - since.getTime()) / (1000 * 60);
   }
 }
