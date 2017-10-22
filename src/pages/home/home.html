@@ -5,6 +5,9 @@
     </ion-title>
 
     <ion-buttons end>
+      <button ion-button icon-only (click)="getWeather()">
+        <ion-icon name="refresh"></ion-icon>
+      </button>
       <button ion-button icon-only (click)="searchLocation()">
         <ion-icon name="search"></ion-icon>
       </button>
@@ -13,7 +16,6 @@
 </ion-header>
 
 <ion-content padding>
-  <button ion-button block (click)="getWeather()">Get weather</button>
 
   <ion-card class="weather-card">
     <ion-card-header>
