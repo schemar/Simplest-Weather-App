@@ -1,6 +1,8 @@
 # Simplest Weather App
 A simple weather application for android.
 
+![Screenshot](resources/screenshot.png)
+
 ## Issue Tracker
 The issue tracker is available at the main repository:
 https://bitbucket.org/schemar/simplest-weather-app
