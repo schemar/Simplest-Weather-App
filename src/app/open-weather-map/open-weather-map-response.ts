@@ -1,5 +1,5 @@
-import { Sky } from "./weather-interface";
-import {WeatherLocation} from "./weather";
+import {Sky} from "../weather/weather-interface";
+import {WeatherLocation} from "../weather/weather";
 
 export class OpenWeatherMapResponse {
   coord: Coordinates;
@@ -27,6 +27,9 @@ export class OpenWeatherMapResponse {
     return response.sys.country;
   }
 
+  /**
+   * @returns {number} The temperature in Kelvin.
+   */
   public static getTemperature(response: OpenWeatherMapResponse): number {
     return response.main.temp;
   }

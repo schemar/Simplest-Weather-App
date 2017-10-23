@@ -1,6 +1,6 @@
 {
-  "name": "Ionic",
-  "short_name": "Ionic",
+  "name": "Simples Weather App",
+  "short_name": "WeatherApp",
   "start_url": "index.html",
   "display": "standalone",
   "icons": [{

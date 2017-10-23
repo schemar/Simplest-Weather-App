@@ -1,4 +1,4 @@
-import { Sky, WeatherInterface, WeatherLocationInterface } from "./weather-interface";
+import {Sky, WeatherInterface, WeatherLocationInterface} from "./weather-interface";
 
 export class WeatherLocation implements WeatherLocationInterface {
   public now: WeatherInterface;

@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from "@angular/core";
+import {Pipe, PipeTransform} from "@angular/core";
 import {Sky} from "./weather-interface";
 
 /**
@@ -12,7 +12,7 @@ import {Sky} from "./weather-interface";
  *   formats to: sunny
  */
 @Pipe({
-  name: 'skyIcon'
+  name: 'skyIcon',
 })
 export class SkyIconPipe implements PipeTransform {
   transform(value: number): string {

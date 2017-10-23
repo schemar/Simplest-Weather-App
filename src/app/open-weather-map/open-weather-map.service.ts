@@ -1,13 +1,17 @@
-import { Injectable } from '@angular/core';
-import { Http } from "@angular/http";
-import { WeatherLocationInterface } from "./weather-interface";
-import { OpenWeatherMapResponse } from "./open-weather-map-response";
-import { Weather} from "./weather";
+import {Injectable} from '@angular/core';
+import {Http} from "@angular/http";
 import {Observable} from "rxjs/Observable";
 import 'rxjs/add/operator/map';
-import {WeatherApiInterface} from "./weather-api-interface";
-import {Storage} from "@ionic/storage";
 
+import {WeatherLocationInterface} from "../weather/weather-interface";
+import {OpenWeatherMapResponse} from "./open-weather-map-response";
+import {Weather} from "../weather/weather";
+import {WeatherApiInterface} from "../weather/weather-api-interface";
+import {OpenWeatherMapStorageService} from "./open-weather-map-storage.service";
+
+/**
+ * An implementation of "WeatherApiInterface" that connects to openweathermap.org.
+ */
 @Injectable()
 export class OpenWeatherMapService implements WeatherApiInterface {
   private urlMethodNow: string = 'weather';
@@ -19,23 +23,39 @@ export class OpenWeatherMapService implements WeatherApiInterface {
   private lastUpdateNow: Date = new Date(1970, 1, 1);
   private lastUpdateForecast: Date = new Date(1970, 1, 1);
 
-  constructor(private http: Http, private storage: Storage) {
-    storage.get('lastUpdateNow').then(lastUpdateNow => {
+  constructor(private http: Http, private storage: OpenWeatherMapStorageService) {
+    storage.getUpdateNow().then(lastUpdateNow => {
       if (lastUpdateNow !== null) {
         this.lastUpdateNow = new Date(lastUpdateNow);
       }
     });
 
-    storage.get('lastUpdateForecast').then(lastUpdateForecast => {
+    storage.getUpdateForecast().then(lastUpdateForecast => {
       if (lastUpdateForecast !== null) {
         this.lastUpdateForecast = new Date(lastUpdateForecast);
       }
     });
   }
 
+  /**
+   * Makes an API call to update current and forecast weather.
+   * @param {WeatherLocationInterface} location - The location where to get the weather for.
+   * @returns {Promise<WeatherLocationInterface>} The location with the updated weather data.
+   */
   public updateWeather(location: WeatherLocationInterface): Promise<WeatherLocationInterface> {
     return this.updateNow(location)
       .then(location => this.updateForecast(location));
+  }
+
+  /**
+   * Resets all caches and storage so that the weather is forced to be fetched from the API.
+   * @returns {Promise<any>}
+   */
+  public resetWeather(): Promise<any> {
+    this.lastUpdateNow = new Date(1970, 1, 1);
+    this.lastUpdateForecast = new Date(1970, 1, 1);
+
+    return this.storage.resetUpdates();
   }
 
   public findLocations(search: string): Promise<WeatherLocationInterface[]> {
@@ -56,16 +76,14 @@ export class OpenWeatherMapService implements WeatherApiInterface {
 
   private updateNow(location: WeatherLocationInterface): Promise<WeatherLocationInterface> {
     if (OpenWeatherMapService.getMinutesSince(this.lastUpdateNow) < 10) {
-      console.info('Not updating "now", since the last update was less than 10 minutes ago:', this.lastUpdateNow);
       return new Promise(resolve => {resolve(location)});
     }
 
     return new Promise(resolve => {
       this.getNow(location).subscribe(locationResponse => {
         location.now = OpenWeatherMapService.createWeatherFromResponse(locationResponse);
-
         this.lastUpdateNow = new Date();
-        this.storage.set('lastUpdateNow', this.lastUpdateNow.getTime());
+        this.storage.storeUpdateNow();
 
         resolve(location)
       });
@@ -74,7 +92,6 @@ export class OpenWeatherMapService implements WeatherApiInterface {
 
   private updateForecast(location: WeatherLocationInterface): Promise<WeatherLocationInterface> {
     if (OpenWeatherMapService.getMinutesSince(this.lastUpdateForecast) < 60) {
-      console.info('Not updating "forecast", since the last update was less than 60 minutes ago:', this.lastUpdateForecast);
       return new Promise(resolve => {resolve(location)});
     }
 
@@ -110,7 +127,7 @@ export class OpenWeatherMapService implements WeatherApiInterface {
         });
 
         this.lastUpdateForecast = new Date();
-        this.storage.set('lastUpdateForecast', this.lastUpdateForecast.getTime());
+        this.storage.storeUpdateForecast();
 
         resolve(location)
       });

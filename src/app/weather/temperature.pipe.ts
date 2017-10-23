@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from "@angular/core";
+import {Pipe, PipeTransform} from "@angular/core";
 
 /**
  * Transform the temperature into a common unit
@@ -12,7 +12,7 @@ import { Pipe, PipeTransform } from "@angular/core";
  *   formats to: 11 °C
  */
 @Pipe({
-  name: 'temperature'
+  name: 'temperature',
 })
 export class TemperaturePipe implements PipeTransform {
   transform(value: number): string {
