@@ -1,9 +1,9 @@
 {
-    "name": "weathering",
+    "name": "Simplest Weather App",
     "version": "0.0.1",
     "author": "Martin Schenck",
-    "homepage": "https://github.com/schemar",
-    "private": true,
+    "homepage": "https://bitbucket.org/schemar/simplest-weather-app",
+    "private": false,
     "scripts": {
         "clean": "ionic-app-scripts clean",
         "build": "ionic-app-scripts build",

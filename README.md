@@ -1,9 +1,9 @@
-# weathering
+# Simplest Weather App
 A simple weather application for android.
 
 ## Issue Tracker
 The issue tracker is available at the main repository:
-https://bitbucket.org/schemar_team/weathering.git
+https://bitbucket.org/schemar/simplest-weather-app
 
 Please also create your pull requests there.
 
