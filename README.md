@@ -1,3 +1,5 @@
+![Logo](resources/android/icon/drawable-xhdpi-icon.png)
+
 # Simplest Weather App
 A simple weather application for android.
 
