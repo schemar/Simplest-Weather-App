@@ -30,6 +30,7 @@ import {LocationSearch} from "../pages/location-search/location-search";
   entryComponents: [
     MyApp,
     HomePage,
+    LocationSearch,
   ],
   providers: [
     StatusBar,
