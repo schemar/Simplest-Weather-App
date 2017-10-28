@@ -5,6 +5,8 @@ A simple weather application for android.
 
 ![Screenshot](resources/screenshot.png)
 
+[![Google Play Badge](resources/google-play-badge.png)](https://play.google.com/store/apps/details?id=me.martinschenck.weather)
+
 ## Issue Tracker
 The issue tracker is available at the main repository:
 https://bitbucket.org/schemar/simplest-weather-app
